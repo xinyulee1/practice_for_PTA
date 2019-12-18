@@ -1,0 +1,118 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct TreeNode *Tree;
+struct TreeNode
+{
+    int data;
+    Tree left;
+    Tree right;
+    int flag;
+};
+Tree new_node(int Data)
+{
+    Tree T = (Tree)malloc(sizeof(struct TreeNode));
+    T->data = Data;
+    T->left = T->right = NULL;
+    T->flag = 0;
+    return T;
+}
+Tree insert(Tree T, int Data)
+{
+    if(!T)
+    {
+        T = new_node(Data);
+    }
+    else
+    {
+        if(Data>T->data)
+            T->right = insert(T->right,Data);
+        else
+            T->left = insert(T->left,Data);
+    }
+
+    return T;
+}
+Tree make_tree(int N)
+{
+    Tree T;
+    int i,Data;
+    scanf("%d",&Data);
+    T = new_node(Data);
+    for (i = 1; i < N; i++)
+    {
+        scanf("%d",&Data);
+        T = insert(T,Data);
+    }
+    return T;
+}
+int check(Tree T, int Data)
+{
+    if(T->flag)
+    {
+        if(Data < T->data)
+            return check(T->left,Data);
+        else if (Data>T->data)
+            return check(T->right,Data);
+        else
+            return 0;
+    }
+    else
+    {
+        if (Data ==T->data)
+        {
+            T->flag = 1;
+            return 1;
+        }
+        else return 0;
+    }
+}
+int judge_trees(Tree T, int N)
+{
+    int i ,Data,flag = 0;
+    scanf("%d",&Data);
+    if(Data!= T->data)flag = 1;
+    else T->flag = 1;
+
+    for(i = 1;i<N;i++)
+    {
+        scanf("%d",&Data);
+        if((!flag)&&(!check(T,Data))) flag = 1;
+    }
+    if (flag) return 0;
+    else return 1;
+}
+void rest_trees(Tree T)
+{
+    if(T->left) rest_trees(T->left);
+    if(T->right) rest_trees(T->right);
+    T->flag = 0;
+}
+void free_trees(Tree T)
+{
+    if(T->left) free_trees(T->left);
+    if(T->right) free_trees(T->right);
+    free(T);
+}
+
+int main()
+{
+    int N,L,i;
+    Tree T;
+
+    scanf("%d",&N);
+    while(N)
+    {
+        scanf("%d",&L);
+        T = make_tree(N);
+        for(i=0;i<L;i++)
+        {
+            if(judge_trees(T,N)) printf("Yes\n");
+            else printf("No\n");
+            rest_trees(T);
+        }
+        free_trees(T);
+        scanf("%d",&N);
+    }
+    return 0;
+}

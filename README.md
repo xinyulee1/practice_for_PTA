@@ -1,2 +1,2 @@
 # practice_for_PTA
-PTA准备
+PAT准备
